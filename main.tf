@@ -106,15 +106,13 @@ resource "azuread_application_password" "main" {
 # App Service Creation or selection
 #---------------------------------------------------------
 
+#tfsec:ignore:azure-appservice-authentication-enabled
+#tfsec:ignore:azure-appservice-require-client-cert
 resource "azurerm_app_service" "main" {
   name                = lower(var.name)
   location            = local.location
   resource_group_name = local.resource_group_name
   app_service_plan_id = var.app_service_plan_id
-  client_cert_enabled = true
-  auth_settings {
-    enabled = true
-  }
   dynamic "site_config" {
     for_each = [merge(local.default_site_config, var.site_config)]
 
