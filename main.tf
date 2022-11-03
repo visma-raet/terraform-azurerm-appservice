@@ -40,7 +40,7 @@ data "azurerm_resource_group" "rgrp" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  #ts:skip=accurics.azure.NS.272 RSG lock should be skipped for now.
+  #ts:skip=AC_AZURE_0389 RSG lock should be skipped for now.
   count    = var.create_resource_group ? 1 : 0
   name     = lower(var.resource_group_name)
   location = var.location
@@ -106,12 +106,13 @@ resource "azuread_application_password" "main" {
 # App Service Creation or selection
 #---------------------------------------------------------
 
+#tfsec:ignore:azure-appservice-authentication-enabled
+#tfsec:ignore:azure-appservice-require-client-cert
 resource "azurerm_app_service" "main" {
   name                = lower(var.name)
   location            = local.location
   resource_group_name = local.resource_group_name
   app_service_plan_id = var.app_service_plan_id
-
   dynamic "site_config" {
     for_each = [merge(local.default_site_config, var.site_config)]
 
