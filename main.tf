@@ -87,21 +87,6 @@ resource "azuread_application" "main" {
   }
 }
 
-resource "azuread_service_principal" "main" {
-  count = var.auth_settings_enabled ? 1 : 0
-
-  application_id               = azuread_application.main[0].application_id
-  app_role_assignment_required = true
-}
-
-resource "azuread_application_password" "main" {
-  count = var.auth_settings_enabled ? 1 : 0
-
-  display_name          = lower(var.name)
-  application_object_id = azuread_application.main[0].object_id
-  end_date              = time_rotating.main[0].rotation_rfc3339
-}
-
 #---------------------------------------------------------
 # App Service Creation or selection
 #---------------------------------------------------------
