@@ -117,3 +117,14 @@ variable "slot_name" {
   type        = string
   default     = "staging"
 }
+
+variable "ad_client_id" {
+  description = "The Client ID of this relying party application. Enables OpenIDConnection authentication with Azure Active Directory."
+  type        = string
+}
+
+variable "ad_allowed_audiences" {
+  description = "(Optional) Allowed audience values to consider when validating JWTs issued by Azure Active Directory."
+  type        = string
+  default     = ""
+}

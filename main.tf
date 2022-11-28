@@ -61,32 +61,6 @@ resource "time_rotating" "main" {
   }
 }
 
-resource "azuread_application" "main" {
-  count = var.auth_settings_enabled ? 1 : 0
-
-  display_name     = lower(var.name)
-  identifier_uris  = [format("api://%s", lower(var.name))]
-  sign_in_audience = "AzureADMyOrg"
-
-  required_resource_access {
-    resource_app_id = "00000003-0000-0000-c000-000000000000"
-
-    resource_access {
-      id   = "e1fe6dd8-ba31-4d61-89e7-88639da4683d"
-      type = "Scope"
-    }
-  }
-
-  web {
-    homepage_url  = format("https://%s.azurewebsites.net", lower(var.name))
-    redirect_uris = [format("https://%s.azurewebsites.net/.auth/login/aad/callback", lower(var.name))]
-    implicit_grant {
-      access_token_issuance_enabled = false
-      id_token_issuance_enabled     = true
-    }
-  }
-}
-
 #---------------------------------------------------------
 # App Service Creation or selection
 #---------------------------------------------------------
@@ -134,8 +108,8 @@ resource "azurerm_app_service" "main" {
       allowed_external_redirect_urls = []
 
       active_directory {
-        client_id         = azuread_application.main[0].application_id
-        allowed_audiences = [format("api://%s", azuread_application.main[0].application_id)]
+        client_id         = var.ad_client_id
+        allowed_audiences = var.ad_allowed_audiences == "" ? null : [format("api://%s", var.ad_allowed_audiences)]
       }
     }
   }
@@ -199,8 +173,8 @@ resource "azurerm_app_service_slot" "staging" {
       allowed_external_redirect_urls = []
 
       active_directory {
-        client_id         = azuread_application.main[0].application_id
-        allowed_audiences = [format("api://%s", azuread_application.main[0].application_id)]
+        client_id         = var.ad_client_id
+        allowed_audiences = var.ad_allowed_audiences == "" ? null : [format("api://%s", var.ad_allowed_audiences)]
       }
     }
   }
