@@ -250,20 +250,3 @@ data "azurerm_application_insights" "main" {
   name                = var.application_insights_name
   resource_group_name = var.application_insights_rsg
 }
-
-provider "azurerm" {
-  features {
-    log_analytics_workspace {
-      permanently_delete_on_destroy = true
-    }
-    resource_group {
-      prevent_deletion_if_contains_resources = true
-    }
-    key_vault {
-      purge_soft_delete_on_destroy               = true
-      purge_soft_deleted_secrets_on_destroy      = true
-      purge_soft_deleted_certificates_on_destroy = true
-    }
-  }
-  skip_provider_registration = true
-}
